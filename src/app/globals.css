@@ -25,15 +25,15 @@ body {
         transform: scale(1);
     }
     to {
-        transform: scale(1.2);
+        transform: scale(1.1);
     }
 }
 
 .hover-zoom-in:hover {
-    animation: zoom-in 0.5s forwards;
+    animation: zoom-in 1.0s forwards;
 }
 
 .hover-in:hover {
-    border: 2px solid blue;
+    border: 2px solid #FA433B;
     outline: none;
 }
