@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import MetaHeader from "@/components/MetaHeader";
 import Footer from "@/components/Footer";
@@ -7,30 +7,40 @@ import NavbarLogado from "@/components/NavbarLogado";
 
 const Dashboard: React.FC = () => {
     const router = useRouter();
-    const user = "Luciano Nascimento"; // Você pode substituir isso pelo nome real do usuário
+    const user = "Luciano Nascimento";
+    const [totalUsers, setTotalUsers] = useState<number | null>(null);
 
     useEffect(() => {
         const token = localStorage.getItem('token');
 
         if (!token) {
             router.push('/login');
+        } else {
+            fetch('http://localhost:80/api/users')
+                .then(response => response.json())
+                .then(data => {
+                    if (data && data.total) {
+                        setTotalUsers(data.total);
+                    } else {
+                        console.error('API data format is incorrect');
+                    }
+                })
+                .catch(error => {
+                    console.error("Erro ao buscar o total de usuários:", error);
+                });
         }
     }, [router]);
 
     return (
         <div className="min-h-screen bg-gray-100">
             <MetaHeader />
-            <NavBar />
-            <NavbarLogado />
+            <NavBar name={user} />  {/* Passar o nome do usuário como prop */}
+            <NavbarLogado user={user} />  {/* Passar o nome do usuário como prop */}
             <main className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
-                <div className="bg-white shadow sm:rounded-lg p-6">
-                    <h1 className="text-3xl font-bold mb-4">Bem-vindo(a), {user}!</h1>
-                    <p className="text-lg text-gray-700 mb-4">Aqui estão suas informações e atividades recentes:</p>
-                    <ul className="list-disc list-inside text-gray-700">
-                        <li>Item 1: Detalhes do item 1</li>
-                        <li>Item 2: Detalhes do item 2</li>
-                        <li>Item 3: Detalhes do item 3</li>
-                    </ul>
+                <div className="card w-72 bg-base-100 shadow-xl mt-4">
+                    <div className="card-body">
+                        <h2 className="card-title">Tot. de Usuários: {totalUsers}</h2>
+                    </div>
                 </div>
             </main>
             <Footer />

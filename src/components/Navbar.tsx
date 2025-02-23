@@ -8,9 +8,10 @@ const russo = Russo_One({
 });
 
 interface NavBarProps {
-    name:string | null
+    name: string | null;  // Aceitar a prop name
 }
-const NavBar: React.FC = () => {
+
+const NavBar: React.FC<NavBarProps> = ({ name }) => {
     const [token, setToken] = useState<string | null>(null);
 
     useEffect(() => {
@@ -29,12 +30,12 @@ const NavBar: React.FC = () => {
                 {token === null ? null : (
                     token ? (
                         <div className="flex items-center">
-                            <span className= 'text-md mr-2'>Seja Bem Vindo(a), {name} </span>
-                        <div className="avatar">
-                            <div className="w-24 rounded">
-                                {/*<img src="/logo.png" alt="logo" style={{ height: '6.25rem' }} className="m1 mr-6" />*/}
+                            <span className='text-md mr-2'>Seja Bem Vindo(a), {name} </span>
+                            <div className="avatar">
+                                <div className="w-24 rounded">
+                                    {/*<img src="/logo.png" alt="logo" style={{ height: '6.25rem' }} className="m1 mr-6" />*/}
+                                </div>
                             </div>
-                        </div>
                         </div>
                     ) : (
                         <Link href="/login" legacyBehavior>

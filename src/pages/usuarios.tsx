@@ -1,14 +1,15 @@
 import React, { useEffect, useState } from "react";
 import Navbar from "@/components/Navbar";
+import UsuarioModal from "@/components/modalusuario";
 
 const Usuarios: React.FC = () => {
-
     const [usuarios, setUsuarios] = useState([]);
     const [totalUsuarios, setTotalUsuarios] = useState(0);
     const [name, setName] = useState<string | null>(null);
     const [page, setPage] = useState(1);
     const [totalPages, setTotalPages] = useState(0);
     const [loading, setLoading] = useState(false);
+    const [selectedUsuario, setSelectedUsuario] = useState<any>(null);
 
     useEffect(() => {
         const fetchUsuarios = async (page: number) => {
@@ -92,6 +93,14 @@ const Usuarios: React.FC = () => {
         return pageNumbers;
     };
 
+    const handleUsuarioClick = (usuario: any) => {
+        setSelectedUsuario(usuario);
+    };
+
+    const closeModal = () => {
+        setSelectedUsuario(null); // Fechar modal
+    };
+
     return (
         <div className="min-h-screen bg-gray-100">
             <Navbar name={name}/>
@@ -112,13 +121,24 @@ const Usuarios: React.FC = () => {
                             <tr key={index} className="border-t">
                                 <td className="px-6 py-3">{usuario.name}</td>
                                 <td className="px-6 py-3">{usuario.email}</td>
-                                <td className="px-6 py-3"><button className="btn btn-warning btn-sm">Detalhes</button></td>
+                                <td className="px-6 py-3">
+                                    <button
+                                        className="btn btn-warning btn-sm"
+                                        onClick={() => handleUsuarioClick(usuario)}
+                                    >
+                                        Detalhes
+                                    </button>
+                                </td>
                             </tr>
                         ))}
                         </tbody>
                     </table>
                 </div>
-                {loading && <p>Carregando...</p>}
+                {loading && (
+                    <div className="flex justify-center my-4">
+                        <div className="loading loading-spinner" style={{width:"100px",height:"100px"}}></div>
+                    </div>
+                )}
 
                 <div className="flex justify-between items-center mt-4">
                     <button
@@ -140,6 +160,13 @@ const Usuarios: React.FC = () => {
                     </button>
                 </div>
             </div>
+
+            {selectedUsuario && (
+                <UsuarioModal
+                    usuario={selectedUsuario}
+                    closeModal={closeModal}
+                />
+            )}
         </div>
     );
 }
