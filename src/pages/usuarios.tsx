@@ -1,50 +1,147 @@
-import React, {useEffect, useState} from "react";
+import React, { useEffect, useState } from "react";
 import Navbar from "@/components/Navbar";
 
 const Usuarios: React.FC = () => {
 
-    const [usuarios, setUsuarios] = useState([])
-    const [totalUsuarios, setTotalUsuarios] = useState(0)
-    const [name, setName] = useState<string | null>(null)
+    const [usuarios, setUsuarios] = useState([]);
+    const [totalUsuarios, setTotalUsuarios] = useState(0);
+    const [name, setName] = useState<string | null>(null);
+    const [page, setPage] = useState(1);
+    const [totalPages, setTotalPages] = useState(0);
+    const [loading, setLoading] = useState(false);
 
     useEffect(() => {
-        fetch('http://localhost:80/api/users')
-            .then(response => response.json())
-            .then(data => {
-                console.log('dados recebidos', data)
-                setUsuarios(data)
-                setTotalUsuarios(data.length)
-            }).catch(errors => {
-            console.log('error', errors)
-        })
-    }, []);
+        const fetchUsuarios = async (page: number) => {
+            setLoading(true);
+            try {
+                const response = await fetch(`http://localhost:80/api/users?page=${page}`);
+                const data = await response.json();
+                console.log('API response:', data);
+                if (data && Array.isArray(data.data)) {
+                    setUsuarios(data.data);
+                    setTotalUsuarios(data.total || 0);
+                    setTotalPages(Math.ceil((data.total || 0) / 10)); // Assuming 10 items per page
+                } else {
+                    console.error('API data format is incorrect');
+                }
+            } catch (errors) {
+                console.log('error', errors);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchUsuarios(page);
+    }, [page]);
+
+    const handlePageChange = (newPage: number) => {
+        if (newPage > 0 && newPage <= totalPages) {
+            setPage(newPage);
+        }
+    };
+
+    const renderPageNumbers = () => {
+        const pageNumbers = [];
+        const maxPageNumbersToShow = 5;
+
+        let startPage = Math.max(1, page - Math.floor(maxPageNumbersToShow / 2));
+        let endPage = Math.min(totalPages, startPage + maxPageNumbersToShow - 1);
+
+        if (endPage - startPage < maxPageNumbersToShow - 1) {
+            startPage = Math.max(1, endPage - maxPageNumbersToShow + 1);
+        }
+
+        for (let i = startPage; i <= endPage; i++) {
+            pageNumbers.push(
+                <button
+                    key={i}
+                    onClick={() => handlePageChange(i)}
+                    className={`btn ${page === i ? 'btn-active' : ''}`}
+                >
+                    {i}
+                </button>
+            );
+        }
+
+        if (startPage > 1) {
+            pageNumbers.unshift(<span key="startEllipsis">...</span>);
+            pageNumbers.unshift(
+                <button
+                    key={1}
+                    onClick={() => handlePageChange(1)}
+                    className={`btn ${page === 1 ? 'btn-active' : ''}`}
+                >
+                    1
+                </button>
+            );
+        }
+
+        if (endPage < totalPages) {
+            pageNumbers.push(<span key="endEllipsis">...</span>);
+            pageNumbers.push(
+                <button
+                    key={totalPages}
+                    onClick={() => handlePageChange(totalPages)}
+                    className={`btn ${page === totalPages ? 'btn-active' : ''}`}
+                >
+                    {totalPages}
+                </button>
+            );
+        }
+
+        return pageNumbers;
+    };
 
     return (
-        <div>
+        <div className="min-h-screen bg-gray-100">
             <Navbar name={name}/>
-            <h1 className="m-3 text-2xl font-bold">Total de Usuários:{totalUsuarios} </h1>
+            <div className="container mx-auto p-4">
+                <h1 className="text-3xl font-bold mb-4">Usuários</h1>
 
-            <div className="overflow-x-auto">
-                <table className="table">
-                    <thead>
-                    <tr>
-                        <th>Nome</th>
-                        <th>Email</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    {usuarios.map((usuario, index) => (
-                        <tr key={index}>
-                            <td>{usuario.name}</td>
-                            <td>{usuario.email}</td>
+                <div className="overflow-x-auto">
+                    <table className="table w-full bg-white shadow-md rounded-lg">
+                        <thead className="bg-gray-200">
+                        <tr>
+                            <th className="px-6 py-3">Nome</th>
+                            <th className="px-6 py-3">Email</th>
+                            <th className="px-6 py-3">Ações</th>
                         </tr>
-                    ))}
-                    </tbody>
-                </table>
+                        </thead>
+                        <tbody>
+                        {usuarios.map((usuario, index) => (
+                            <tr key={index} className="border-t">
+                                <td className="px-6 py-3">{usuario.name}</td>
+                                <td className="px-6 py-3">{usuario.email}</td>
+                                <td className="px-6 py-3"><button className="btn btn-warning btn-sm">Detalhes</button></td>
+                            </tr>
+                        ))}
+                        </tbody>
+                    </table>
+                </div>
+                {loading && <p>Carregando...</p>}
+
+                <div className="flex justify-between items-center mt-4">
+                    <button
+                        onClick={() => handlePageChange(page - 1)}
+                        className="btn btn-primary"
+                        disabled={page === 1 || loading}
+                    >
+                        Anterior
+                    </button>
+                    <div className="space-x-2">
+                        {renderPageNumbers()}
+                    </div>
+                    <button
+                        onClick={() => handlePageChange(page + 1)}
+                        className="btn btn-primary"
+                        disabled={page === totalPages || loading}
+                    >
+                        Próximo
+                    </button>
+                </div>
             </div>
         </div>
-    )
+    );
 }
 
-
-export default Usuarios
+export default Usuarios;
