@@ -11,8 +11,8 @@ const NavBar: React.FC = () => {
                             <Link href="/cadastar-veiculos" className="inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium leading-5 text-gray-500 hover:text-gray-700">
                                 Cadastrar Veículos
                             </Link>
-                            <Link href="/cadastar-usuario" className="inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium leading-5 text-gray-500 hover:text-gray-700">
-                                Cadastrar Usuário
+                            <Link href="/usuarios" className="inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium leading-5 text-gray-500 hover:text-gray-700">
+                                Usuários
                             </Link>
                             <Link href="/fazer-reservas" className="inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium leading-5 text-gray-500 hover:text-gray-700">
                                 Fazer Reservas
