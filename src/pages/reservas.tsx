@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import Navbar from "@/components/Navbar";
+import NavbarLogado from "@/components/NavbarLogado";
 
 const Reservas: React.FC = () => {
     const [reservas, setReservas] = useState([]);
@@ -105,6 +106,7 @@ const Reservas: React.FC = () => {
     return (
         <div className="min-h-screen bg-gray-100">
             <Navbar name={name} />
+            <NavbarLogado/>
             <div className="container mx-auto p-4">
                 <h1 className="text-3xl font-bold mb-4">Reservas</h1>
 

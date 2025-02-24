@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import Navbar from "@/components/Navbar";
-import VeiculoModal from "@/components/modalveiculo"; // Importe o modal de veículos
+import VeiculoModal from "@/components/modalveiculo";
+import NavbarLogado from "@/components/NavbarLogado"; // Importe o modal de veículos
 
 const Veiculos: React.FC = () => {
     const [veiculos, setVeiculos] = useState([]);
@@ -116,6 +117,7 @@ const Veiculos: React.FC = () => {
     return (
         <div className="min-h-screen bg-gray-100">
             <Navbar name={name} />
+            <NavbarLogado/>
             <div className="container mx-auto p-4">
                 <h1 className="text-3xl font-bold mb-4">Veículos</h1>
 
