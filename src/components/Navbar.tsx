@@ -8,7 +8,7 @@ const russo = Russo_One({
 });
 
 interface NavBarProps {
-    name: "oi";  // Aceitar a prop name
+    name: string
 }
 
 const NavBar: React.FC<NavBarProps> = ({ name }) => {

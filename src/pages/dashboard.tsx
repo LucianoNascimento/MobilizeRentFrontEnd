@@ -20,13 +20,13 @@ const Dashboard: React.FC = () => {
         } else {
             const fetchData = async () => {
                 // Função para verificar se a resposta é JSON válido
-                const isJsonResponse = (response) => {
+                const isJsonResponse = (response:any) => {
                     const contentType = response.headers.get('content-type');
                     return contentType && contentType.indexOf('application/json') !== -1;
                 };
 
                 // Função para buscar dados da API
-                const fetchAPI = async (url, setData, storageKey) => {
+                const fetchAPI = async (url:any, setData:any, storageKey:any) => {
                     try {
                         const response = await fetch(url);
                         if (!isJsonResponse(response)) {
@@ -90,7 +90,7 @@ const Dashboard: React.FC = () => {
         <div className="min-h-screen bg-gray-100">
             <MetaHeader />
             <NavBar name={user} />  {/* Passar o nome do usuário como prop */}
-            <NavbarLogado user={user} />  {/* Passar o nome do usuário como prop */}
+            <NavbarLogado />  {/* Passar o nome do usuário como prop */}
             <main className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
                 <div className="card w-72 bg-base-100 shadow-xl mt-4">
                     <div className="card-body">
