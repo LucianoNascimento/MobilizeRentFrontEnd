@@ -12,9 +12,9 @@ const NavBar: React.FC = () => {
                                   className="inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium leading-5 text-gray-500 hover:text-gray-700">
                                 Usuários
                             </Link>
-                            <Link href="/cadastar-veiculos"
+                            <Link href="/veiculos"
                                   className="inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium leading-5 text-gray-500 hover:text-gray-700">
-                                Cadastrar Veículos
+                                Veículos
                             </Link>
                             <Link href="/fazer-reservas"
                                   className="inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium leading-5 text-gray-500 hover:text-gray-700">

@@ -9,6 +9,7 @@ const Dashboard: React.FC = () => {
     const router = useRouter();
     const user = "Luciano Nascimento";
     const [totalUsers, setTotalUsers] = useState<number | null>(null);
+    const [totalVeiculos, setTotalVeiculos] = useState<number | null>(null);
 
     useEffect(() => {
         const token = localStorage.getItem('token');
@@ -16,18 +17,59 @@ const Dashboard: React.FC = () => {
         if (!token) {
             router.push('/login');
         } else {
-            fetch('http://localhost:80/api/users')
-                .then(response => response.json())
-                .then(data => {
-                    if (data && data.total) {
-                        setTotalUsers(data.total);
-                    } else {
-                        console.error('API data format is incorrect');
+            const fetchData = async () => {
+                // Função para verificar se a resposta é JSON válido
+                const isJsonResponse = (response) => {
+                    const contentType = response.headers.get('content-type');
+                    return contentType && contentType.indexOf('application/json') !== -1;
+                };
+
+                // Função para buscar dados da API
+                const fetchAPI = async (url, setData, storageKey) => {
+                    try {
+                        const response = await fetch(url);
+                        if (!isJsonResponse(response)) {
+                            throw new Error("A resposta não é JSON");
+                        }
+                        const data = await response.json();
+                        if (data && data.total) {
+                            setData(data.total);
+                            localStorage.setItem(storageKey, data.total.toString());
+                            localStorage.setItem(`${storageKey}Timestamp`, Date.now().toString());
+                        } else {
+                            console.error('Formato de dados da API está incorreto');
+                        }
+                    } catch (error) {
+                        console.error(`Erro ao buscar ${storageKey}:`, error);
                     }
-                })
-                .catch(error => {
-                    console.error("Erro ao buscar o total de usuários:", error);
-                });
+                };
+
+                // Verificar e buscar total de usuários
+                const cachedUsers = localStorage.getItem('totalUsers');
+                const cachedUsersTimestamp = localStorage.getItem('totalUsersTimestamp');
+                const usersAge = Date.now() - (cachedUsersTimestamp ? parseInt(cachedUsersTimestamp) : 0);
+                const usersCacheValid = cachedUsers && usersAge < 3600000; // 1 hora
+
+                if (usersCacheValid) {
+                    setTotalUsers(parseInt(cachedUsers));
+                } else {
+                    await fetchAPI('http://localhost:80/api/users', setTotalUsers, 'totalUsers');
+                }
+
+                // Verificar e buscar total de veículos
+                const cachedVeiculos = localStorage.getItem('totalVeiculos');
+                const cachedVeiculosTimestamp = localStorage.getItem('totalVeiculosTimestamp');
+                const veiculosAge = Date.now() - (cachedVeiculosTimestamp ? parseInt(cachedVeiculosTimestamp) : 0);
+                const veiculosCacheValid = cachedVeiculos && veiculosAge < 3600000; // 1 hora
+
+                if (veiculosCacheValid) {
+                    setTotalVeiculos(parseInt(cachedVeiculos));
+                } else {
+                    await fetchAPI('http://localhost:80/api/vehicles', setTotalVeiculos, 'totalVeiculos');
+                }
+            };
+
+            fetchData();
         }
     }, [router]);
 
@@ -40,6 +82,11 @@ const Dashboard: React.FC = () => {
                 <div className="card w-72 bg-base-100 shadow-xl mt-4">
                     <div className="card-body">
                         <h2 className="card-title">Tot. de Usuários: {totalUsers}</h2>
+                    </div>
+                </div>
+                <div className="card w-72 bg-base-100 shadow-xl mt-4">
+                    <div className="card-body">
+                        <h2 className="card-title">Tot. de Veículos: {totalVeiculos}</h2>
                     </div>
                 </div>
             </main>

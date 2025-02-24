@@ -31,7 +31,7 @@ export default function Home() {
 
     return (
         <div className="min-h-screen bg-gray-100">
-            <NavBar />
+            <NavBar name={'oi'} />
 
             <main>
                 <div className="text-center py-10">
