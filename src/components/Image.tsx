@@ -22,6 +22,7 @@ interface ImageProps {
 
 const Image: React.FC<{ image: ImageProps }> = ({ image }) => {
     const completePath = `storage/${image.path}`;
+    console.log(`http://localhost:80/${completePath}`);
     return (
         <div className="p-4 border rounded-xl hover-in">
             <img src={`http://localhost:80/${completePath}`} alt={`${image.vehicle.brand} ${image.vehicle.model}`} className="w-full h-64 object-cover hover-zoom-in" />
