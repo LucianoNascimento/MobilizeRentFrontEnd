@@ -10,6 +10,7 @@ const Dashboard: React.FC = () => {
     const user = "Luciano Nascimento";
     const [totalUsers, setTotalUsers] = useState<number | null>(null);
     const [totalVeiculos, setTotalVeiculos] = useState<number | null>(null);
+    const [totalReservas, setTotalReservas] = useState<number | null>(null);
 
     useEffect(() => {
         const token = localStorage.getItem('token');
@@ -67,6 +68,18 @@ const Dashboard: React.FC = () => {
                 } else {
                     await fetchAPI('http://localhost:80/api/vehicles', setTotalVeiculos, 'totalVeiculos');
                 }
+
+                // Verificar e buscar total de reservas
+                const cachedReservas = localStorage.getItem('totalReservas');
+                const cachedReservasTimestamp = localStorage.getItem('totalReservasTimestamp');
+                const reservasAge = Date.now() - (cachedReservasTimestamp ? parseInt(cachedReservasTimestamp) : 0);
+                const reservasCacheValid = cachedReservas && reservasAge < 3600000; // 1 hora
+
+                if (reservasCacheValid) {
+                    setTotalReservas(parseInt(cachedReservas));
+                } else {
+                    await fetchAPI('http://localhost:80/api/reservations', setTotalReservas, 'totalReservas');
+                }
             };
 
             fetchData();
@@ -87,6 +100,11 @@ const Dashboard: React.FC = () => {
                 <div className="card w-72 bg-base-100 shadow-xl mt-4">
                     <div className="card-body">
                         <h2 className="card-title">Tot. de Veículos: {totalVeiculos}</h2>
+                    </div>
+                </div>
+                <div className="card w-72 bg-base-100 shadow-xl mt-4">
+                    <div className="card-body">
+                        <h2 className="card-title">Tot. de Reservas: {totalReservas}</h2>
                     </div>
                 </div>
             </main>
